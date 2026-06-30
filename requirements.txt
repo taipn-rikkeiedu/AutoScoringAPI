@@ -3,4 +3,4 @@ uvicorn
 requests
 python-dotenv
 google-generativeai
-httpx2
+httpx
