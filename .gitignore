@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Môi trường ảo (Virtual Environment)
+.venv
+venv
+ENV
+env
+bin/
+Include/
+lib/
+share/
+pyvenv.cfg
+pip-selfcheck.json
+
+# Cấu hình cá nhân / Khóa bí mật
+.env
+.env.local
+.env.*
+*.local
+credentials.json
+
+# Thư mục tạm thời / Log hệ thống
+*.log
+.cache/
+
+# IDE và Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+
+# File đồng bộ cấu hình tự động (nếu sinh ra ở thư mục gốc)
+.sync_settings.json
+config.json
