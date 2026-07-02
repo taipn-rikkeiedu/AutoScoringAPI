@@ -215,7 +215,12 @@ class AIService:
             "\n".join(content),
             "\nYêu cầu đánh giá theo tiêu chí sau:",
             criteria,
-            "\nVui lòng trả về kết quả bằng Tiếng Việt và trình bày đẹp dưới dạng bảng biểu Markdown, bao gồm:\n- Bảng điểm chi tiết với từng tiêu chí và tổng điểm /100 ở dòng cuối.\n- Nhận xét chi tiết cho từng tiêu chí (Điểm mạnh & Điểm yếu).\n- Gợi ý cụ thể để cải thiện mã nguồn.\n",
+            "\nVui lòng trả về kết quả đánh giá bằng Tiếng Việt dưới dạng Markdown có cấu trúc rõ ràng, bao gồm:\n"
+            "1. BẢNG ĐIỂM CHI TIẾT: Liệt kê từng tiêu chí, trọng số điểm và điểm số đạt được, cùng tổng điểm /100 ở dòng cuối.\n"
+            "2. NHẬN XÉT CHI TIẾT CHO TỪNG TIÊU CHÍ (Yêu cầu nhận xét cực kỳ chi tiết, sâu sắc, có tính sư phạm cao):\n"
+            "   - Điểm mạnh: Phân tích cụ thể các phần code viết tốt, cấu trúc khoa học, thuật toán tối ưu hoặc cách tổ chức thư mục/biến hợp lý.\n"
+            "   - Điểm yếu/Hạn chế: Chỉ ra cụ thể từng lỗi logic, dòng code chưa tối ưu, vi phạm clean code, vấn đề hiệu năng hoặc bảo mật (nêu rõ file nào, dòng nào nếu có). Tránh nhận xét chung chung hoặc quá ngắn.\n"
+            "3. GỢI Ý CẢI THIỆN: Cung cấp các đề xuất cụ thể kèm theo ví dụ code minh họa (refactored code) để người học biết cách sửa và tối ưu hóa code trực quan nhất.\n",
         ]
         return "\n\n".join(prompt_lines)
 
@@ -378,7 +383,12 @@ class AIService:
             project_content,
             "\nYêu cầu đánh giá theo tiêu chí sau:",
             criteria,
-            "\nVui lòng trả về kết quả bằng Tiếng Việt và trình bày đẹp dưới dạng bảng biểu Markdown, bao gồm:\n- Bảng điểm chi tiết với từng tiêu chí và tổng điểm /100 ở dòng cuối.\n- Nhận xét chi tiết cho từng tiêu chí (Điểm mạnh & Điểm yếu).\n- Gợi ý cụ thể để cải thiện mã nguồn.\n",
+            "\nVui lòng trả về kết quả đánh giá bằng Tiếng Việt dưới dạng Markdown có cấu trúc rõ ràng, bao gồm:\n"
+            "1. BẢNG ĐIỂM CHI TIẾT: Liệt kê từng tiêu chí, trọng số điểm và điểm số đạt được, cùng tổng điểm /100 ở dòng cuối.\n"
+            "2. NHẬN XÉT CHI TIẾT CHO TỪNG TIÊU CHÍ (Yêu cầu nhận xét cực kỳ chi tiết, sâu sắc, có tính sư phạm cao):\n"
+            "   - Điểm mạnh: Phân tích cụ thể các phần code viết tốt, cấu trúc khoa học, thuật toán tối ưu hoặc cách tổ chức thư mục/biến hợp lý.\n"
+            "   - Điểm yếu/Hạn chế: Chỉ ra cụ thể từng lỗi logic, dòng code chưa tối ưu, vi phạm clean code, vấn đề hiệu năng hoặc bảo mật (nêu rõ file nào, dòng nào nếu có). Tránh nhận xét chung chung hoặc quá ngắn.\n"
+            "3. GỢI Ý CẢI THIỆN: Cung cấp các đề xuất cụ thể kèm theo ví dụ code minh họa (refactored code) để người học biết cách sửa và tối ưu hóa code trực quan nhất.\n",
         ]
         return "\n\n".join(prompt_lines)
 
