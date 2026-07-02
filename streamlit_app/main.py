@@ -23,7 +23,7 @@ from streamlit_app.components.modals import (
     show_add_assignment_dialog,
     show_edit_assignment_dialog,
     show_delete_assignment_dialog,
-    show_backup_restore_dialog,
+    show_upload_templates_dialog,
 )
 
 
@@ -573,7 +573,7 @@ def main():
             st.success(st.session_state.templates_crud_success)
             del st.session_state.templates_crud_success
             
-        col_btn1, col_btn2, col_btn3, col_btn4 = st.columns(4)
+        col_btn1, col_btn2, col_btn3, col_btn4, col_btn5 = st.columns(5)
         with col_btn1:
             if st.button("➕ Thêm mới", use_container_width=True):
                 show_add_assignment_dialog(templates)
@@ -584,8 +584,17 @@ def main():
             if st.button("🗑️ Xóa", use_container_width=True):
                 show_delete_assignment_dialog(templates)
         with col_btn4:
-            if st.button("📁 Sao lưu / Khôi phục", use_container_width=True):
-                show_backup_restore_dialog(templates)
+            if st.button("📥 Upload đề bài", use_container_width=True):
+                show_upload_templates_dialog()
+        with col_btn5:
+            templates_data = json.dumps(templates, ensure_ascii=False, indent=2)
+            st.download_button(
+                label="📤 Tải về đề bài",
+                data=templates_data,
+                file_name="templates.json",
+                mime="application/json",
+                use_container_width=True
+            )
 
         st.markdown('<div class="manager-section">', unsafe_allow_html=True)
         st.subheader("Danh sách bài tập")

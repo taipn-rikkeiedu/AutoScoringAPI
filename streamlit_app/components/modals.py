@@ -2,16 +2,15 @@ import json
 import streamlit as st
 from core.storage_service import save_templates
 
-@st.dialog("📁 Sao lưu & Khôi phục Thư viện mẫu")
-def show_backup_restore_dialog(templates):
-    st.subheader("📥 Khôi phục dữ liệu (Import)")
+@st.dialog("📥 Upload file đề bài (JSON)")
+def show_upload_templates_dialog():
     st.caption("Chọn tệp templates.json từ máy tính để nạp danh sách bài tập mới:")
     uploaded_file = st.file_uploader(
         "Chọn tệp templates.json",
         type=["json"],
         key="modal_templates_uploader"
     )
-    if st.button("🔌 Áp dụng dữ liệu mới", use_container_width=True, type="primary"):
+    if st.button("🔌 Áp dụng đề bài mới", use_container_width=True, type="primary"):
         if uploaded_file is not None:
             try:
                 uploaded_templates = json.load(uploaded_file)
@@ -25,18 +24,6 @@ def show_backup_restore_dialog(templates):
                 st.error(f"Lỗi đọc file: {str(e)}")
         else:
             st.warning("Vui lòng chọn tệp templates.json trước khi bấm áp dụng.")
-            
-    st.markdown("---")
-    st.subheader("📤 Sao lưu dữ liệu (Export)")
-    st.caption("Tải tệp templates.json hiện tại về máy tính để sao lưu:")
-    templates_data = json.dumps(templates, ensure_ascii=False, indent=2)
-    st.download_button(
-        label="📥 Tải xuống templates.json",
-        data=templates_data,
-        file_name="templates.json",
-        mime="application/json",
-        use_container_width=True
-    )
 
 @st.dialog("📚 Chọn đề bài từ Thư viện mẫu")
 def show_template_loader_dialog(templates):
