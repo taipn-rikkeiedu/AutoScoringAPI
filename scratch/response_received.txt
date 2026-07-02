@@ -1,0 +1,10 @@
+## KẾT QUẢ CHẤM ĐIỂM
+| Tiêu chí | Điểm |
+|---|---|
+| Cấu hình API Endpoint | 0/20 |
+| Logic xử lý | 0/40 |
+| Bảo mật | 0/40 |
+| **TỔNG** | **0/100** |
+
+## NHẬN XÉT
+Mã nguồn chỉ là hàm Python đơn giản, không phải API endpoint. Thiếu cấu hình, logic chấm điểm và các yếu tố bảo mật cần thiết cho một API hoàn chỉnh.

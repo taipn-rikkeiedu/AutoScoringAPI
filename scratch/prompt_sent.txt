@@ -1,0 +1,23 @@
+Hãy chấm điểm mã nguồn dưới đây theo thang 100 điểm và viết nhận xét ngắn gọn bằng Tiếng Việt.
+Điền kết quả chấm điểm vào bảng và ghi các ý nhận xét (tối đa 30 từ) vào đúng cấu trúc định dạng dưới đây. KHÔNG viết lời dẫn hay phản hồi ngoài cấu trúc này:
+
+## KẾT QUẢ CHẤM ĐIỂM
+| Tiêu chí | Điểm |
+|---|---|
+| Tiêu chí 1 | X/Y |
+| ... | ... |
+| **TỔNG** | **Z/100** |
+
+## NHẬN XÉT
+[Viết nhận xét ngắn gọn tại đây, tối đa 30 từ]
+
+---
+ĐỀ BÀI: Viết API Endpoint hoàn chỉnh phục vụ việc chấm điểm mã nguồn.
+
+TIÊU CHÍ: Cấu hình API Endpoint: 20đ
+Logic xử lý: 40đ
+Bảo mật: 40đ
+
+MÃ NGUỒN:
+def hello():
+    return 'world'

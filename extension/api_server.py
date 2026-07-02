@@ -2,9 +2,9 @@ import os
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from core.github_service import GithubService
+from core.github_service import GithubService, GitHubService
 from core.ai_service import AIService
-from core.cache_service import CacheService
+from core.cache_service import CacheService, get_cached_report, save_cached_report
 from core.storage_service import get_ai_config, provider_display_name
 from core.exercise_service import ExerciseService
 
@@ -140,3 +140,86 @@ async def parse_docx(file: UploadFile = File(...)):
         return {"text": text}
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ── API endpoints for unittest and client ──
+
+class ApiGradeRequest(BaseModel):
+    repo_url: str
+    chapter: str
+    session: str
+    assignment_name: str
+
+
+@app.get("/api/config")
+def api_get_config():
+    config = get_ai_config()
+    return {
+        "provider": config.get("provider", "gemini"),
+        "exercise_source": config.get("exercise_source", "local"),
+        "has_github_token": bool(config.get("github_token")),
+    }
+
+
+@app.get("/api/exercises")
+def api_get_exercises():
+    try:
+        return ExerciseService.load_templates()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/api/grade")
+def api_grade_project(request: ApiGradeRequest):
+    try:
+        templates = ExerciseService.load_templates()
+        chapter_data = templates.get(request.chapter, {})
+        session_data = chapter_data.get(request.session, {})
+        assignment_data = session_data.get(request.assignment_name, {})
+        
+        if not assignment_data:
+            raise HTTPException(status_code=404, detail="Không tìm thấy bài tập")
+            
+        assignment_text = assignment_data.get("assignment", "")
+        criteria_text = assignment_data.get("criteria", "")
+        
+        # Lấy nội dung repository qua GitHubService
+        repo_data = GitHubService.get_repo_contents(request.repo_url)
+        content_str = repo_data["content"]
+        total_files = repo_data["total_files"]
+        
+        # Kiểm tra cache
+        cached_report = get_cached_report(assignment_text, criteria_text, content_str)
+        cache_hit = False
+        
+        if cached_report:
+            report_text = cached_report
+            cache_hit = True
+        else:
+            ai_service = AIService()
+            prompt = ai_service.build_prompt_from_strings(assignment_text, criteria_text, content_str)
+            config = get_ai_config()
+            provider = (config.get("provider") or "gemini").strip().lower()
+            model = ai_service.resolve_model_name(provider, config)
+            api_key = ai_service.resolve_api_key(provider, config)
+            api_base_url = (
+                config.get("custom_api_base_url")
+                or config.get("openrouter_api_base_url")
+                or "https://openrouter.ai/api/v1"
+            )
+            report_text = ai_service.send_to_model(provider, api_key, api_base_url, model, prompt)
+            save_cached_report(assignment_text, criteria_text, content_str, report_text)
+            
+        from utils.helpers import parse_score
+        score = parse_score(report_text) or "N/A"
+        
+        return {
+            "success": True,
+            "cache_hit": cache_hit,
+            "score": score,
+            "total_files": total_files,
+            "report": report_text
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+

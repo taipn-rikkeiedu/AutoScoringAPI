@@ -1,0 +1,8 @@
+## KẾT QUẢ CHẤM ĐIỂM
+| Tiêu chí | Điểm |
+|---|---|
+| Cấu hình API Endpoint | 0/20 |
+| **TỔNG** | **0/100** |
+
+## NHẬN XÉT
+Mã nguồn chỉ là một hàm Python thông thường, không phải là một API endpoint hoàn chỉnh và không có cấu hình API.

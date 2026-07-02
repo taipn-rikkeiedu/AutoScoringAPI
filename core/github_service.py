@@ -42,20 +42,8 @@ class GithubService:
     @classmethod
     def extract_docx_text(cls, docx_bytes: bytes) -> str:
         """Trích xuất văn bản thô từ tệp .docx trong bộ nhớ."""
-        try:
-            with zipfile.ZipFile(io.BytesIO(docx_bytes)) as doc_zip:
-                if "word/document.xml" in doc_zip.namelist():
-                    xml_content = doc_zip.read("word/document.xml")
-                    root = ET.fromstring(xml_content)
-                    texts = []
-                    for elem in root.iter():
-                        # Lấy nội dung text trong các thẻ <w:t>
-                        if elem.tag.endswith("}t") and elem.text:
-                            texts.append(elem.text)
-                    return " ".join(texts)
-        except Exception as e:
-            return f"[Lỗi trích xuất tài liệu .docx: {str(e)}]"
-        return ""
+        return cls._parse_docx_bytes(docx_bytes)
+
 
     @classmethod
     def fetch_repo_files(
@@ -256,3 +244,93 @@ class GithubService:
         if os.path.basename(normalized) in Settings.EXCLUDED_FILES:
             return True
         return False
+
+    @classmethod
+    def _parse_docx_bytes(cls, docx_bytes: bytes) -> str:
+        """Phân tích các đoạn văn bản trong file .docx và phân tách chúng bằng dấu xuống dòng."""
+        try:
+            with zipfile.ZipFile(io.BytesIO(docx_bytes)) as doc_zip:
+                if "word/document.xml" in doc_zip.namelist():
+                    xml_content = doc_zip.read("word/document.xml")
+                    root = ET.fromstring(xml_content)
+                    
+                    paragraphs = []
+                    namespace = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+                    for p in root.findall(".//w:p", namespace):
+                        p_text = []
+                        for t in p.findall(".//w:t", namespace):
+                            if t.text:
+                                p_text.append(t.text)
+                        if p_text:
+                            paragraphs.append("".join(p_text))
+                    
+                    if paragraphs:
+                        return "\n".join(paragraphs)
+                    
+                    # Fallback
+                    texts = []
+                    for elem in root.iter():
+                        if elem.tag.endswith("}t") and elem.text:
+                            texts.append(elem.text)
+                    return " ".join(texts)
+        except Exception as e:
+            return f"[Lỗi trích xuất tài liệu .docx: {str(e)}]"
+        return ""
+
+    @classmethod
+    def get_repo_contents(cls, github_url: str, on_progress=None) -> dict:
+        """Kéo mã nguồn và định dạng trả về dạng chuỗi văn bản duy nhất để tương thích với Streamlit app."""
+        info = cls.parse_github_url(github_url)
+        owner = info["owner"]
+        repo = info["repo"]
+        branch = info["branch"]
+        
+        if on_progress:
+            on_progress("parse_url", username=owner, repo=repo)
+            on_progress("detect_branch_start")
+            
+        # Xác định default branch
+        default_branch = None
+        try:
+            repo_api_url = f"{cls.API_BASE}/repos/{owner}/{repo}"
+            res = requests.get(repo_api_url, headers=cls.get_headers(), timeout=10)
+            if res.status_code == 200:
+                default_branch = res.json().get("default_branch")
+        except Exception:
+            pass
+            
+        if default_branch:
+            branch = default_branch
+            
+        if on_progress:
+            on_progress("detect_branch", branch=branch, note="nhánh mặc định")
+            on_progress("try_archive", branch=branch)
+            
+        # Tải mã nguồn bằng fetch_repo_files
+        # Chúng ta giả định url truyền vào có thể cập nhật nhánh vừa tìm thấy
+        updated_url = f"https://github.com/{owner}/{repo}"
+        if branch:
+            updated_url = f"https://github.com/{owner}/{repo}/tree/{branch}"
+            
+        files = cls.fetch_repo_files(updated_url)
+        
+        if on_progress:
+            on_progress("download_files", total=len(files))
+            for i, f in enumerate(files, 1):
+                on_progress("file_downloaded", current=i, total=len(files), file_path=f["path"])
+            on_progress("done", total_files=len(files))
+            
+        # Ghép nội dung
+        content_parts = []
+        for f in files:
+            content_parts.append(f"FILE PATH: {f['path']}\n{f['content']}\n\n")
+            
+        return {
+            "content": "".join(content_parts),
+            "total_files": len(files)
+        }
+
+
+# Tạo bí danh (alias) để hỗ trợ cả hai cách import
+GitHubService = GithubService
+

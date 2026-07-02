@@ -18,6 +18,7 @@ class Settings:
     )
 
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+    GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash", "gemini-1.5-pro"]
     DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
     DEEPSEEK_API_BASE_URL = os.getenv(
         "DEEPSEEK_API_BASE_URL", "https://api.deepseek.com"
@@ -28,6 +29,7 @@ class Settings:
         "OPENROUTER_API_BASE_URL", "https://openrouter.ai/api/v1"
     )
     OPENROUTER_MODEL_NAME = os.getenv("OPENROUTER_MODEL_NAME", "qwen/qwen3-coder:free")
+    OPENROUTER_MODELS = ["qwen/qwen3-coder:free", "deepseek/deepseek-r1:free", "google/gemini-2.5-pro:free"]
     GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
     DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "gemini-1.5-pro")
     AI_PROVIDER = os.getenv("AI_PROVIDER", "gemini").strip().lower()
@@ -47,6 +49,7 @@ class Settings:
     EXERCISE_SOURCE = os.getenv("EXERCISE_SOURCE", "local").strip().lower()
     EXERCISE_API_URL = os.getenv("EXERCISE_API_URL", "")
     EXERCISE_API_TOKEN = os.getenv("EXERCISE_API_TOKEN", "")
+    GOOGLE_SHEET_URL = os.getenv("GOOGLE_SHEET_URL", "")
 
     ALLOWED_EXTENSIONS = (
         ".py",
